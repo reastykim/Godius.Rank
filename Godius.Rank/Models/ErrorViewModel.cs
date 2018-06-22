@@ -1,6 +1,6 @@
 using System;
 
-namespace Godius.Rank.Models
+namespace Godius.RankSite.Models
 {
     public class ErrorViewModel
     {

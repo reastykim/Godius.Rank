@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Godius.Rank.Models;
+using Godius.RankSite.Models;
 
-namespace Godius.Rank.Controllers
+namespace Godius.RankSite.Controllers
 {
     public class HomeController : Controller
     {
