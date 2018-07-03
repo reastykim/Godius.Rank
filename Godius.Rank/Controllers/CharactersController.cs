@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Godius.RankSite.Data;
-using Godius.RankSite.Models;
+using Godius.Data;
+using Godius.Data.Models;
 using Godius.RankSite.Extensions;
 
 namespace Godius.RankSite.Controllers

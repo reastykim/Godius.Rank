@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Godius.RankSite.Data;
-using Godius.RankSite.Models;
+using Godius.Data;
+using Godius.Data.Models;
 
 namespace Godius.RankSite.Controllers
 {
@@ -57,7 +57,7 @@ namespace Godius.RankSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CharacterId,Date,Ranking")] Models.Rank rank)
+        public async Task<IActionResult> Create([Bind("Id,CharacterId,Date,Ranking")] Rank rank)
         {
             if (ModelState.IsValid)
             {
@@ -92,7 +92,7 @@ namespace Godius.RankSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CharacterId,Date,Ranking")] Models.Rank rank)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CharacterId,Date,Ranking")] Rank rank)
         {
             if (id != rank.Id)
             {

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Godius.RankSite.Models
+namespace Godius.Data.Models
 {
     public class Guild
     {
@@ -29,7 +29,7 @@ namespace Godius.RankSite.Models
         Apprentice,
         [Display(Name = "저니맨")]
         Journeyman,
-        [Display(Name = "서브 마스터")]
+        [Display(Name = "서브마스터")]
         SubMaster,
         [Display(Name = "마스터")]
         Master

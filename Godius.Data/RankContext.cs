@@ -1,11 +1,11 @@
-﻿using Godius.RankSite.Models;
+﻿using Godius.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Godius.RankSite.Data
+namespace Godius.Data
 {
     public class RankContext : DbContext
     {

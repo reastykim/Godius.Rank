@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Godius.RankSite.Models
+namespace Godius.Data.Models
 {
     public class Rank
     {
