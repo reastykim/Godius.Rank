@@ -120,7 +120,7 @@ namespace Godius.RankCollector
 
         private static Rank UpdateRanking(Character member, string ranking, DateTime rankingDate, RankContext context)
         {
-            var rank = member.Ranks.FirstOrDefault(R => R.Date.Value == rankingDate);
+            var rank = member.Ranks?.FirstOrDefault(R => R.Date.Value == rankingDate);
             if (rank == null)
             {
                 rank = new Rank { CharacterId = member.Id, Ranking = Int32.Parse(ranking), Date = rankingDate };
