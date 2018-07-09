@@ -1,0 +1,141 @@
+﻿@using Godius.RankSite.Helpers;
+@model Godius.Data.Models.Guild
+@{
+
+    var currentRankingDate = Model.Characters.Select(C => C.Ranks.Where(R => R.Date.HasValue)
+                                             .OrderByDescending(R => R.Date).Select(R => R.Date.Value).FirstOrDefault())
+                                             .OrderByDescending(D => D)
+                                             .FirstOrDefault();
+
+    ViewData["Title"] = $"{Model.Name} 길드 멤버 랭킹 ({currentRankingDate.ToShortDateString()})";
+}
+
+<br />
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#perPosition" data-toggle="tab">직급별</a>
+    </li>
+    <li>
+        <a href="#perRanking" data-toggle="tab">랭킹별</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="perPosition">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width:45px">직급</th>
+                    <th>아이디</th>
+                    <th>랭킹</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var sortedMemberByPositionList = Model.Characters.OrderByDescending(C => C.GuildPosition)
+                                                                     .ThenBy(C => C.Name)
+                                                                     .ToList();
+                    foreach (var member in sortedMemberByPositionList)
+                    {
+                        var currentRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).FirstOrDefault();
+
+                        var rankText = "";
+                        if (member.Ranks.Count > 1)
+                        {
+                            var lastRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).ElementAt(1);
+
+                            if (lastRanking > currentRanking)
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-danger'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRanking - lastRanking})</span>";
+                            }
+                            else if (lastRanking < currentRanking)
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRanking - lastRanking})</span>";
+                            }
+                            else
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                            }
+                        }
+                        else
+                        {
+                            rankText = $"{currentRanking} 위 <span class='text-secondary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                        }
+
+                        <tr>
+                            <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
+                            <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
+
+                            <td style="vertical-align:middle">@Html.Raw(rankText)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane" id="perRanking">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width:45px">순위</th>
+                    <th style="width:45px">직급</th>
+                    <th>아이디</th>
+                    <th>랭킹</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var sortedMemberByRankingList = Model.Characters.Where(C => C.Ranks.Count > 0)
+                                                                    .OrderBy(C => C.Ranks.OrderByDescending(R => R.Date)
+                                                                    .Select(R => R.Ranking).FirstOrDefault())
+                                                                    .ToList();
+                    for (int i = 1; i <= sortedMemberByRankingList.Count; i++)
+                    {
+                        var member = sortedMemberByRankingList[i - 1];
+                        var currentRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).FirstOrDefault();
+
+                        var rankText = "";
+                        if (member.Ranks.Count > 1)
+                        {
+                            var lastRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).ElementAt(1);
+
+                            if (lastRanking > currentRanking)
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-danger'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRanking - lastRanking})</span>";
+                            }
+                            else if (lastRanking < currentRanking)
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRanking - lastRanking})</span>";
+                            }
+                            else
+                            {
+                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                            }
+                        }
+                        else
+                        {
+                            rankText = $"{currentRanking} 위 <span class='text-secondary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                        }
+
+                        <tr>
+                            <td align="center" style="vertical-align:middle">
+                                @if (i <= 10)
+                                {
+                                    <b>@Html.Raw(i)</b>
+                                }
+                                else
+                                {
+                                    @Html.Raw(i)
+                                }
+                            </td>
+                            <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
+                            <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
+
+                            <td style="vertical-align:middle">@Html.Raw(rankText)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
