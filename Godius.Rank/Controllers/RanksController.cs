@@ -22,7 +22,9 @@ namespace Godius.RankSite.Controllers
         // GET: Ranks
         public async Task<IActionResult> Index()
         {
-            var rankContext = _context.Ranks.Include(r => r.Character).OrderBy(R => R.Date);
+            var rankContext = _context.Ranks.Include(r => r.Character).ThenInclude(C => C.Guild)
+                                            .OrderBy(R => R.Character.Guild.Name)
+                                            .ThenBy(R => R.Character.Name).ThenBy(R => R.Date);
             return View(await rankContext.ToListAsync());
         }
 
@@ -48,7 +50,9 @@ namespace Godius.RankSite.Controllers
         // GET: Ranks/Create
         public IActionResult Create()
         {
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Name");
+            ViewData["CharacterId"] = new SelectList(_context.Characters.Include(C => C.Guild)
+                                                                        .OrderBy(C => C.Guild.Name)
+                                                                        .ThenBy(C => C.Name), "Id", "Name", null, "Guild.Name");
             return View();
         }
 

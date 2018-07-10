@@ -24,10 +24,16 @@ namespace Godius.RankSite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<RankContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.Configure<IISOptions>(options =>
+            {
+                options.ForwardClientCertificate = false;
+            });
 
             services.AddMvc();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

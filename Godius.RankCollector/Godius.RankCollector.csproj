@@ -150,6 +150,9 @@
     </Content>
     <None Include="packages.config" />
     <None Include="랭킹.xlsx" />
+    <Content Include="어벤져스.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Godius.Data\Godius.Data.csproj">
