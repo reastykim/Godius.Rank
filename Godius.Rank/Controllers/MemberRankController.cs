@@ -26,15 +26,26 @@ namespace Godius.RankSite.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var guildName = _configuration["GuildName"];
+            var subDomain = HttpContext.Request.Host.Host.Split('.', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            var guildName = String.Empty;
+            switch (subDomain?.ToUpper())
+            {
+                case "GISADAN":
+                    guildName = "기사단";
+                    break;
+                case "AVENGERS":
+                    guildName = "어벤져스";
+                    break;
+            }
+
             if (String.IsNullOrWhiteSpace(guildName))
             {
                 return NotFound();
             }
 
             var guild = await _context.Guilds.Include(G => G.Characters)
-                                       .ThenInclude(C => C.Ranks)
-                                       .FirstOrDefaultAsync(G => G.Name == guildName);
+                                      .ThenInclude(C => C.Ranks)
+                                      .FirstOrDefaultAsync(G => G.Name == guildName);
 
 
             return View(guild);
