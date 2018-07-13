@@ -1,13 +1,8 @@
 ﻿@using Godius.RankSite.Helpers;
 @model Godius.Data.Models.Guild
 @{
-
-    var currentRankingDate = Model.Characters.Select(C => C.Ranks.Where(R => R.Date.HasValue)
-                                             .OrderByDescending(R => R.Date).Select(R => R.Date.Value).FirstOrDefault())
-                                             .OrderByDescending(D => D)
-                                             .FirstOrDefault();
-
-    ViewData["Title"] = $"{Model.Name} 길드 멤버 랭킹 ({currentRankingDate.ToShortDateString()})";
+    var currentRankingDate = ViewData["Date"] as DateTime?;
+    ViewData["Title"] = $"{Model.Name} 길드 멤버 랭킹 ({currentRankingDate?.ToShortDateString()})";
 }
 
 <br />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godius.Data;
+using Godius.Data.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ namespace Godius.RankSite.Controllers
             switch (subDomain?.ToUpper())
             {
                 case "GISADAN":
+                default:
                     guildName = "기사단";
                     break;
                 case "AVENGERS":
@@ -43,12 +45,28 @@ namespace Godius.RankSite.Controllers
                 return NotFound();
             }
 
-            var guild = await _context.Guilds.Include(G => G.Characters)
+            var rankingDate = GetRankingUpdatedDate();
+
+            ViewData["Date"] = rankingDate;
+
+            var targetGuild = await _context.Guilds.Include(G => G.Characters)
                                       .ThenInclude(C => C.Ranks)
+                                      .Where(G => G.Name == guildName)
                                       .FirstOrDefaultAsync(G => G.Name == guildName);
 
+            return View(targetGuild);
+        }
 
-            return View(guild);
+        private static DateTime GetRankingUpdatedDate()
+        {
+            var date = DateTime.Now.Date;
+
+            while (date.DayOfWeek != DayOfWeek.Friday)
+            {
+                date = date.AddDays(-1);
+            }
+
+            return date;
         }
     }
 }
