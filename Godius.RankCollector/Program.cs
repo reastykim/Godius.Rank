@@ -85,6 +85,9 @@ namespace Godius.RankCollector
                         UpdateRanking(member, ranking, rankingDate, context);
                     }
                 }
+
+                // Add Weekly Ranking
+                AddWeeklyRanking(guild, context);
             }
 
             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Finish a getting the ranking of memeber!");
@@ -171,16 +174,47 @@ namespace Godius.RankCollector
             return String.Empty;
         }
 
-        private static DateTime GetRankingUpdatedDate()
+        private static void AddWeeklyRanking(Guild guild, RankContext context)
         {
-            var date = DateTime.Now.Date;
+            var rankingDate = GetRankingUpdatedDate();
 
-            while (date.DayOfWeek != DayOfWeek.Friday)
+            List<Rank> currentWeekRanks = new List<Rank>();
+            foreach (var characterId in guild.Characters.Select(C => C.Id))
             {
-                date = date.AddDays(-1);
+                var character = context.Characters.Include("Guild").Include("Ranks")
+                                                  .FirstOrDefault(C => C.Id == characterId);
+
+                var currentWeekRank = character.Ranks.FirstOrDefault(R => R.Date.GetValueOrDefault() == rankingDate);
+                if (currentWeekRank != null)
+                {
+                    currentWeekRanks.Add(currentWeekRank);
+                }
             }
 
-            return date;
+            currentWeekRanks = currentWeekRanks.OrderBy(R => R.Ranking).ToList();
+
+            for (int i = 1; i <= currentWeekRanks.Count; i++)
+            {
+                var rank = currentWeekRanks[i - 1];
+                var weeklyRank = new WeeklyRank { CharacterId = rank.CharacterId, Ranking = i, Date = rankingDate };
+                context.WeeklyRanks.Add(weeklyRank);
+                context.SaveChanges();
+            }
+        }
+
+        private static DateTime GetRankingUpdatedDate(DateTime? date = null)
+        {
+            if (date == null)
+            {
+                date = DateTime.Now.Date;
+            }
+
+            while (date.Value.DayOfWeek != DayOfWeek.Friday)
+            {
+                date = date.Value.AddDays(-1);
+            }
+
+            return date.Value;
         }
     }
 }

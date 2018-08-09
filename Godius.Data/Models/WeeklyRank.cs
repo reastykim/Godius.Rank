@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Godius.Data.Models
 {
-    public class Rank : IComparable
+    public class WeeklyRank : IComparable
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -24,7 +23,7 @@ namespace Godius.Data.Models
 
         [Display(Name = "랭킹")]
         public int Ranking { get; set; }
-        
+
         public int CompareTo(object obj)
         {
             Rank other = obj as Rank;

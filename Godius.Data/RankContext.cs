@@ -15,13 +15,15 @@ namespace Godius.Data
 
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<Character> Characters { get; set; }
-        public DbSet<Models.Rank> Ranks { get; set; }
+        public DbSet<Rank> Ranks { get; set; }
+        public DbSet<WeeklyRank> WeeklyRanks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Guild>().ToTable("Guild");
             modelBuilder.Entity<Character>().ToTable("Character");
-            modelBuilder.Entity<Models.Rank>().ToTable("Rank");
+            modelBuilder.Entity<Rank>().ToTable("Rank");
+            modelBuilder.Entity<WeeklyRank>().ToTable("WeeklyRank");
         }
     }
 }

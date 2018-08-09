@@ -23,5 +23,7 @@ namespace Godius.Data.Models
         public GuildPositions? GuildPosition { get; set; }
 
         public ICollection<Rank> Ranks { get; set; }
+
+        public ICollection<WeeklyRank> WeeklyRanks { get; set; }
     }
 }
