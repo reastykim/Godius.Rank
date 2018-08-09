@@ -32,29 +32,33 @@
                                                                      .ToList();
                     foreach (var member in sortedMemberByPositionList)
                     {
-                        var currentRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).FirstOrDefault();
+                        var currentRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate);
+                        var lastRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
+
+                        if (currentRank == null)
+                        {
+                            continue;
+                        }
 
                         var rankText = "";
-                        if (member.Ranks.Count > 1)
+                        if (lastRank != null)
                         {
-                            var lastRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).ElementAt(1);
-
-                            if (lastRanking > currentRanking)
+                            if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-danger'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRanking - lastRanking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
                             }
-                            else if (lastRanking < currentRanking)
+                            else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRanking - lastRanking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
                             }
                             else
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
                             }
                         }
                         else
                         {
-                            rankText = $"{currentRanking} 위 <span class='text-secondary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                            rankText = $"{currentRank.Ranking} 위 <span class='text-secondary' style='font-size:12px'>(New)</span>";
                         }
 
                         <tr>
@@ -72,7 +76,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width:45px">순위</th>
+                    <th style="width:90px">순위</th>
                     <th style="width:45px">직급</th>
                     <th>아이디</th>
                     <th>랭킹</th>
@@ -80,47 +84,70 @@
             </thead>
             <tbody>
                 @{
-                    var sortedMemberByRankingList = Model.Characters.Where(C => C.Ranks.Count > 0)
-                                                                    .OrderBy(C => C.Ranks.OrderByDescending(R => R.Date)
-                                                                    .Select(R => R.Ranking).FirstOrDefault())
-                                                                    .ToList();
-                    for (int i = 1; i <= sortedMemberByRankingList.Count; i++)
+                    var sortedRankList = Model.Characters.Select(C => C.WeeklyRanks.FirstOrDefault(WR => WR.Date == currentRankingDate))
+                                                         .Where(WR => WR != null)
+                                                         .OrderBy(WR => WR.Ranking)
+                                                         .ToList();
+
+                    for (int i = 1; i <= sortedRankList.Count; i++)
                     {
-                        var member = sortedMemberByRankingList[i - 1];
-                        var currentRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).FirstOrDefault();
+                        var sortedRank = sortedRankList[i - 1];
+                        var member = sortedRank.Character;
+                        var lastWeeklyRank = member.WeeklyRanks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
+                        var currentRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate);
+                        var lastRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
 
-                        var rankText = "";
-                        if (member.Ranks.Count > 1)
+                        var weeklyRankText = "";
+                        if (lastWeeklyRank != null)
                         {
-                            var lastRanking = member.Ranks.OrderByDescending(R => R.Date).Select(R => R.Ranking).ElementAt(1);
-
-                            if (lastRanking > currentRanking)
+                            if (lastWeeklyRank.Ranking > i)
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-danger'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRanking - lastRanking})</span>";
+                                weeklyRankText = $"{i} <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {i - lastWeeklyRank.Ranking})</span>";
                             }
-                            else if (lastRanking < currentRanking)
+                            else if (lastWeeklyRank.Ranking < i)
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRanking - lastRanking})</span>";
+                                weeklyRankText = $"{i} <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {i - lastWeeklyRank.Ranking})</span>";
                             }
                             else
                             {
-                                rankText = $"{currentRanking} 위 <span class='text-primary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                weeklyRankText = $"{i} <span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
                             }
                         }
                         else
                         {
-                            rankText = $"{currentRanking} 위 <span class='text-secondary'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                            weeklyRankText = $"{i} <span class='text-danger' style='font-size:12px'>(New)</span>";
+                        }
+
+                        var rankText = "";
+                        if (lastRank != null)
+                        {
+                            if (lastRank.Ranking > currentRank.Ranking)
+                            {
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                            }
+                            else if (lastRank.Ranking < currentRank.Ranking)
+                            {
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                            }
+                            else
+                            {
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                            }
+                        }
+                        else
+                        {
+                            rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(New)</span>";
                         }
 
                         <tr>
-                            <td align="center" style="vertical-align:middle">
+                            <td style="vertical-align:middle">
                                 @if (i <= 10)
                                 {
-                                    <b>@Html.Raw(i)</b>
+                                    <b>@Html.Raw(weeklyRankText)</b>
                                 }
                                 else
                                 {
-                                    @Html.Raw(i)
+                                    @Html.Raw(weeklyRankText)
                                 }
                             </td>
                             <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>

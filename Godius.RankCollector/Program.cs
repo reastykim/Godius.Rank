@@ -51,7 +51,11 @@ namespace Godius.RankCollector
             {
                 DbInitializer.Initialize(context);
                 var guildName = guildMemberFileInfo.Name.Replace(guildMemberFileInfo.Extension, "");
-                var guild = CreateGuild(guildName, context);
+                var guild = CreateGuild(context, guildName);
+
+#if UPDATE_WEEKLY_RANKING
+                UpdateWeeklyRanking(context, guild, new DateTime(2018, 7, 21));
+#else
 
                 // Read a Guild Member file
                 using (var sr = guildMemberFileInfo.OpenText())
@@ -69,7 +73,7 @@ namespace Godius.RankCollector
                         // Gets or Create the Guild and Member to Database
                         var guildPosition = splitedMemberInfo[0];
                         var characterName = splitedMemberInfo[1];
-                        var member = CreateCharacter(characterName, guild, guildPosition, context);
+                        var member = CreateCharacter(context, characterName, guild, guildPosition);
 
                         // Get a Ranking of Character vis web parsing
                         var ranking = GetCharacterRanking(member.Name, UsedEncoding);
@@ -82,19 +86,25 @@ namespace Godius.RankCollector
                         var rankingDate = GetRankingUpdatedDate();
 
                         // Update
-                        UpdateRanking(member, ranking, rankingDate, context);
+                        UpdateRanking(context, member, ranking, rankingDate);
                     }
                 }
 
                 // Add Weekly Ranking
-                AddWeeklyRanking(guild, context);
+                AddWeeklyRanking(context, guild);
+#endif
             }
 
             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Finish a getting the ranking of memeber!");
             Console.ReadLine();
         }
 
-        private static Guild CreateGuild(string guildName, RankContext context)
+        private static void UpdateWeeklyRanking(RankContext context, Guild guild, DateTime rankingDate)
+        {
+            AddWeeklyRanking(context, guild, rankingDate);
+        }
+
+        private static Guild CreateGuild(RankContext context, string guildName)
         {
             var guild = context.Guilds.Include("Characters").FirstOrDefault(G => G.Name == guildName);
             if (guild == null)
@@ -107,7 +117,7 @@ namespace Godius.RankCollector
             return guild;
         }
 
-        private static Character CreateCharacter(string characterName, Guild guild, string guildPositionDisplay, RankContext context)
+        private static Character CreateCharacter(RankContext context, string characterName, Guild guild, string guildPositionDisplay)
         {
             var character = context.Characters.Include("Guild").Include("Ranks").FirstOrDefault(C => C.Name == characterName);
             if (character == null)
@@ -121,7 +131,7 @@ namespace Godius.RankCollector
             return character;
         }
 
-        private static Rank UpdateRanking(Character member, string ranking, DateTime rankingDate, RankContext context)
+        private static Rank UpdateRanking(RankContext context, Character member, string ranking, DateTime rankingDate)
         {
             var rank = member.Ranks?.FirstOrDefault(R => R.Date.Value == rankingDate);
             if (rank == null)
@@ -174,9 +184,9 @@ namespace Godius.RankCollector
             return String.Empty;
         }
 
-        private static void AddWeeklyRanking(Guild guild, RankContext context)
+        private static void AddWeeklyRanking(RankContext context, Guild guild, DateTime? rankingDate = null)
         {
-            var rankingDate = GetRankingUpdatedDate();
+            rankingDate = GetRankingUpdatedDate(rankingDate);
 
             List<Rank> currentWeekRanks = new List<Rank>();
             foreach (var characterId in guild.Characters.Select(C => C.Id))

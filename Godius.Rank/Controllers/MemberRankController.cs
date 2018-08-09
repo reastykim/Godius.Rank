@@ -49,10 +49,10 @@ namespace Godius.RankSite.Controllers
 
             ViewData["Date"] = rankingDate;
 
-            var targetGuild = await _context.Guilds.Include(G => G.Characters)
-                                      .ThenInclude(C => C.Ranks)
-                                      .Where(G => G.Name == guildName)
-                                      .FirstOrDefaultAsync(G => G.Name == guildName);
+            var targetGuild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
+                                                   .Include(G => G.Characters).ThenInclude(C => C.WeeklyRanks)
+                                            .Where(G => G.Name == guildName)
+                                            .FirstOrDefaultAsync(G => G.Name == guildName);
 
             return View(targetGuild);
         }
