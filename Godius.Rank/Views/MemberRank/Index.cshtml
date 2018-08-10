@@ -27,7 +27,8 @@
             </thead>
             <tbody>
                 @{
-                    var sortedMemberByPositionList = Model.Characters.OrderByDescending(C => C.GuildPosition)
+                    var sortedMemberByPositionList = Model.Characters.Where(C => C.IsActivated)
+                                                                     .OrderByDescending(C => C.GuildPosition)
                                                                      .ThenBy(C => C.Name)
                                                                      .ToList();
                     foreach (var member in sortedMemberByPositionList)
@@ -84,7 +85,8 @@
             </thead>
             <tbody>
                 @{
-                    var sortedRankList = Model.Characters.Select(C => C.WeeklyRanks.FirstOrDefault(WR => WR.Date == currentRankingDate))
+                    var sortedRankList = Model.Characters.Where(C => C.IsActivated)
+                                                         .Select(C => C.WeeklyRanks.FirstOrDefault(WR => WR.Date == currentRankingDate))
                                                          .Where(WR => WR != null)
                                                          .OrderBy(WR => WR.Ranking)
                                                          .ToList();

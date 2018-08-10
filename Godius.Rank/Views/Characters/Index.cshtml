@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.GuildPosition)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActivated)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -35,6 +38,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GuildPosition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActivated)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

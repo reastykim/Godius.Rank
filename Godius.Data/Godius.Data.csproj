@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20180803023205_AddWeeklyRankTable.cs" />
     <Compile Remove="Migrations\20180803023420_AddWeeklyRankTable.cs" />
+    <Compile Remove="Migrations\20180810055950_AddIsActivatedColumn.cs" />
+    <Compile Remove="Migrations\20180810060035_AddIsActivatedColumn.cs" />
   </ItemGroup>
 
   <ItemGroup>

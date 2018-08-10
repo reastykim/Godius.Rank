@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,6 +13,10 @@ namespace Godius.Data.Models
 
         [Display(Name = "캐릭터명")]
         public string Name { get; set; }
+
+        [Display(Name = "활성화 여부")]
+        [DefaultValue(true)]
+        public bool IsActivated { get; set; } = true;
 
         [ForeignKey("GuildId")]
         [Display(Name = "길드")]

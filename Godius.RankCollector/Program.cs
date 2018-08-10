@@ -54,7 +54,7 @@ namespace Godius.RankCollector
                 var guild = CreateGuild(context, guildName);
 
 #if UPDATE_WEEKLY_RANKING
-                UpdateWeeklyRanking(context, guild, new DateTime(2018, 7, 21));
+                UpdateWeeklyRanking(context, guild, new DateTime(2018, 8, 10));
 #else
 
                 // Read a Guild Member file
@@ -189,7 +189,7 @@ namespace Godius.RankCollector
             rankingDate = GetRankingUpdatedDate(rankingDate);
 
             List<Rank> currentWeekRanks = new List<Rank>();
-            foreach (var characterId in guild.Characters.Select(C => C.Id))
+            foreach (var characterId in guild.Characters.Where(C => C.IsActivated).Select(C => C.Id))
             {
                 var character = context.Characters.Include("Guild").Include("Ranks")
                                                   .FirstOrDefault(C => C.Id == characterId);

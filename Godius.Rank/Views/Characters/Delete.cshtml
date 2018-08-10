@@ -29,6 +29,12 @@
         <dd>
             @Html.DisplayFor(model => model.Guild.Id)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActivated)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Guild.IsActivated)
+        </dd>
     </dl>
     
     <form asp-action="Delete">
