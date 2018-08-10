@@ -2,11 +2,11 @@
 @model Godius.Data.Models.Guild
 @{
     var currentRankingDate = ViewData["Date"] as DateTime?;
-    ViewData["Title"] = $"{Model.Name} 길드 멤버 랭킹 ({currentRankingDate?.ToShortDateString()})";
+    ViewData["Title"] = $"{Model.Name} 길드원 랭킹 ({currentRankingDate?.ToShortDateString()})";
 }
 
 <br />
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs" id="categoryTab">
     <li class="active">
         <a href="#perPosition" data-toggle="tab">직급별</a>
     </li>
@@ -45,11 +45,11 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
                             }
                             else
                             {
@@ -58,7 +58,7 @@
                         }
                         else
                         {
-                            rankText = $"{currentRank.Ranking} 위 <span class='text-secondary' style='font-size:12px'>(New)</span>";
+                            rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(New)</span>";
                         }
 
                         <tr>
@@ -76,7 +76,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width:90px">순위</th>
+                    <th style="width:80px">순위</th>
                     <th style="width:45px">직급</th>
                     <th>아이디</th>
                     <th>랭킹</th>
@@ -102,11 +102,11 @@
                         {
                             if (lastWeeklyRank.Ranking > i)
                             {
-                                weeklyRankText = $"{i} <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {i - lastWeeklyRank.Ranking})</span>";
+                                weeklyRankText = $"{i} <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span>";
                             }
                             else if (lastWeeklyRank.Ranking < i)
                             {
-                                weeklyRankText = $"{i} <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {i - lastWeeklyRank.Ranking})</span>";
+                                weeklyRankText = $"{i} <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span>";
                             }
                             else
                             {
@@ -123,11 +123,11 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {currentRank.Ranking - lastRank.Ranking})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
                             }
                             else
                             {
@@ -161,3 +161,18 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('#categoryTab a[href="' + activeTab + '"]').tab('show');
+            }
+        });
+    </script>
+}

@@ -25,7 +25,7 @@ namespace Godius.RankSite.Controllers
             _configuration = configuration;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? rankingDate = null)
         {
             var subDomain = HttpContext.Request.Host.Host.Split('.', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             var guildName = String.Empty;
@@ -45,7 +45,7 @@ namespace Godius.RankSite.Controllers
                 return NotFound();
             }
 
-            var rankingDate = GetRankingUpdatedDate();
+            rankingDate = GetRankingUpdatedDate(rankingDate);
 
             ViewData["Date"] = rankingDate;
 
@@ -56,17 +56,20 @@ namespace Godius.RankSite.Controllers
 
             return View(targetGuild);
         }
-
-        private static DateTime GetRankingUpdatedDate()
+        
+        private static DateTime GetRankingUpdatedDate(DateTime? date = null)
         {
-            var date = DateTime.Now.Date;
-
-            while (date.DayOfWeek != DayOfWeek.Friday)
+            if (date == null)
             {
-                date = date.AddDays(-1);
+                date = DateTime.Now.Date;
             }
 
-            return date;
+            while (date.Value.DayOfWeek != DayOfWeek.Friday)
+            {
+                date = date.Value.AddDays(-1);
+            }
+
+            return date.Value;
         }
     }
 }
