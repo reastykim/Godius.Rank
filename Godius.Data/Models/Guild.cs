@@ -19,6 +19,8 @@ namespace Godius.Data.Models
         public string Image { get; set; }
 
         public ICollection<Character> Characters { get; set; }
+
+        public ICollection<WeeklyRank> WeeklyRanks { get; set; }
     }
 
     public enum GuildPositions

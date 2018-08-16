@@ -22,7 +22,7 @@ namespace Godius.Data.Models
         [Display(Name = "길드")]
         public Guild Guild { get; set; }
         [Display(Name = "길드")]
-        public Guid GuildId { get; set; }
+        public Guid? GuildId { get; set; }
 
         [Display(Name = "길드 직급")]
         public GuildPositions? GuildPosition { get; set; }

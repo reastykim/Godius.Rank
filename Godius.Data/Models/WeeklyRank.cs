@@ -11,11 +11,15 @@ namespace Godius.Data.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [ForeignKey("CharacterId")]
+        [Display(Name = "길드")]
+        public Guild Guild { get; set; }
+        [Display(Name = "길드")]
+        public Guid? GuildId { get; set; }
+
         [Display(Name = "캐릭터")]
         public Character Character { get; set; }
         [Display(Name = "캐릭터")]
-        public Guid CharacterId { get; set; }
+        public Guid? CharacterId { get; set; }
 
         [Display(Name = "날짜")]
         [DataType(DataType.Date)]

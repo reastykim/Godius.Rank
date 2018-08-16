@@ -120,13 +120,26 @@ namespace Godius.RankCollector
         private static Character CreateCharacter(RankContext context, string characterName, Guild guild, string guildPositionDisplay)
         {
             var character = context.Characters.Include("Guild").Include("Ranks").FirstOrDefault(C => C.Name == characterName);
+            var guildPosition = EnumHelper.ParseDisplayToEnum<GuildPositions>(guildPositionDisplay);
+
             if (character == null)
             {
-                var guildPosition = EnumHelper.ParseDisplayToEnum<GuildPositions>(guildPositionDisplay);
+                
                 character = new Character { Name = characterName, GuildId = guild.Id, GuildPosition = guildPosition };
                 context.Characters.Add(character);
-                context.SaveChanges();
             }
+
+            if (character.GuildId != guild.Id)
+            {
+                character.GuildId = guild.Id;
+            }
+
+            if (character.GuildPosition != guildPosition)
+            {
+                character.GuildPosition = guildPosition;
+            }
+
+            context.SaveChanges();
 
             return character;
         }
@@ -206,7 +219,7 @@ namespace Godius.RankCollector
             for (int i = 1; i <= currentWeekRanks.Count; i++)
             {
                 var rank = currentWeekRanks[i - 1];
-                var weeklyRank = new WeeklyRank { CharacterId = rank.CharacterId, Ranking = i, Date = rankingDate };
+                var weeklyRank = new WeeklyRank { CharacterId = rank.CharacterId, GuildId = guild.Id, Ranking = i, Date = rankingDate };
                 context.WeeklyRanks.Add(weeklyRank);
                 context.SaveChanges();
             }

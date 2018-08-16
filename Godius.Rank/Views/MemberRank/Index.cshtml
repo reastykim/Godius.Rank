@@ -28,9 +28,9 @@
             <tbody>
                 @{
                     var sortedMemberByPositionList = Model.Characters.Where(C => C.IsActivated)
-                                                                     .OrderByDescending(C => C.GuildPosition)
-                                                                     .ThenBy(C => C.Name)
-                                                                     .ToList();
+                                                                                 .OrderByDescending(C => C.GuildPosition)
+                                                                                 .ThenBy(C => C.Name)
+                                                                                 .ToList();
                     foreach (var member in sortedMemberByPositionList)
                     {
                         var currentRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate);
@@ -46,27 +46,27 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-danger' style='font-size: 12px;text-decoration: underline;'> (<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-primary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-secondary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
                         {
-                            rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(New)</span>";
+                            rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size: 12px;text-decoration: underline;'>(New)</span>";
                         }
 
                         <tr>
                             <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
                             <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
 
-                            <td style="vertical-align:middle">@Html.Raw(rankText)</td>
+                            <td style="vertical-align:middle">@Html.Raw($"<a name='rankText' href='#' data-toggle='modal' data-target='#rankModal'>{rankText}</a>")</td>
                         </tr>
                     }
                 }
@@ -85,17 +85,18 @@
             </thead>
             <tbody>
                 @{
-                    var sortedRankList = Model.Characters.Where(C => C.IsActivated)
-                                                         .Select(C => C.WeeklyRanks.FirstOrDefault(WR => WR.Date == currentRankingDate))
-                                                         .Where(WR => WR != null)
-                                                         .OrderBy(WR => WR.Ranking)
-                                                         .ToList();
+                    var sortedRankList = Model.WeeklyRanks.Where(WR => WR.Date == currentRankingDate)
+                                                          .OrderBy(WR => WR.Ranking)
+                                                          .ToList();
+
+                    var lastWeeklyRankList = Model.WeeklyRanks.Where(WR => WR.Date == currentRankingDate?.AddDays(-7));
 
                     for (int i = 1; i <= sortedRankList.Count; i++)
                     {
                         var sortedRank = sortedRankList[i - 1];
                         var member = sortedRank.Character;
-                        var lastWeeklyRank = member.WeeklyRanks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
+                        var lastWeeklyRank = lastWeeklyRankList.FirstOrDefault(WR => WR.CharacterId == member.Id);
+
                         var currentRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate);
                         var lastRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
 
@@ -133,7 +134,7 @@
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                rankText = $"{currentRank.Ranking} 위 <span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
                             }
                         }
                         else
@@ -164,6 +165,23 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="rankModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @section Scripts {
 
     <script type="text/javascript">
@@ -175,6 +193,24 @@
             if (activeTab) {
                 $('#categoryTab a[href="' + activeTab + '"]').tab('show');
             }
+
+            $("a[name='rankText']").each(function () {
+                $(this).on("click", function () {
+                    var characterId = $(this).attr('data-id');
+                    console.log('clicked. characterId=' + characterId);
+
+                    console.log('/MemberRank/GetAllRanks?characterId=' + characterId)
+                    //$.ajax({
+                    //    url: "/MemberRank/GetAllRanks?characterId=" + characterId,
+                    //    success: function (result) {
+                    //        console.log(response);
+                    //    }
+                    //});
+
+                    //$("h4.modal-title").text(characterId);
+                    //$('#rankModal').modal();
+                });
+            });
         });
     </script>
 }

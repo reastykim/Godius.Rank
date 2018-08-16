@@ -10,6 +10,11 @@
     <Compile Remove="Migrations\20180803023420_AddWeeklyRankTable.cs" />
     <Compile Remove="Migrations\20180810055950_AddIsActivatedColumn.cs" />
     <Compile Remove="Migrations\20180810060035_AddIsActivatedColumn.cs" />
+    <Compile Remove="Migrations\20180817005035_UpdateWeeklyRankTableColumnForGuild.cs" />
+    <Compile Remove="Migrations\20180817005210_UpdateWeeklyRankTableColumnForGuild.cs" />
+    <Compile Remove="Migrations\20180817005618_UpdateWeeklyRankTableColumnForGuild.cs" />
+    <Compile Remove="Migrations\20180817024054_UpdateWeeklyRankTableColumnForGuild.cs" />
+    <Compile Remove="Migrations\20180817024241_UpdateWeeklyRankTableColumnForGuild.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -50,11 +50,27 @@ namespace Godius.RankSite.Controllers
             ViewData["Date"] = rankingDate;
 
             var targetGuild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
-                                                   .Include(G => G.Characters).ThenInclude(C => C.WeeklyRanks)
+                                                   .Include(G => G.WeeklyRanks)
                                             .Where(G => G.Name == guildName)
                                             .FirstOrDefaultAsync(G => G.Name == guildName);
 
-            return View(targetGuild);
+            if (targetGuild == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(targetGuild);
+            }
+        }
+
+        public async Task<IActionResult> GetAllRanks(Guid characterId)
+        {
+            var allRank = await _context.Characters.Include(C => C.Ranks).FirstOrDefaultAsync(C => C.Id == characterId);
+            if (allRank == null)
+                return NotFound();
+
+            return new JsonResult(allRank);
         }
         
         private static DateTime GetRankingUpdatedDate(DateTime? date = null)
