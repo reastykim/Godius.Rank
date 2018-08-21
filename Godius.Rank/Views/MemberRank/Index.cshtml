@@ -225,6 +225,7 @@
                                         label: '랭킹',
                                         fill: false,
                                         borderColor: '#c45850',
+                                        backgroundColor: '#c45850',
                                     }]
                                 },
                                 options: {
@@ -233,10 +234,11 @@
                                             type: 'time',
                                             time: {
                                                 unit: 'day',
+                                                unitStepSize: 7,
                                                 displayFormats: {
                                                     day: 'YYYY-MM-DD'
-                                                }
-                                            }
+                                                },
+                                            },
                                         }],
                                         yAxes: [{
                                             gridLines: {
@@ -254,6 +256,11 @@
                                                 }
                                             },
                                         }]
+                                    },
+                                    elements: {
+                                        line: {
+                                            tension: 0, // disables bezier curves
+                                        }
                                     }
                                 }
                             });
