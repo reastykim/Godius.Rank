@@ -66,11 +66,22 @@ namespace Godius.RankSite.Controllers
 
         public async Task<IActionResult> GetAllRanks(Guid characterId)
         {
-            var allRank = await _context.Characters.Include(C => C.Ranks).FirstOrDefaultAsync(C => C.Id == characterId);
-            if (allRank == null)
+            var character = await _context.Characters.FirstOrDefaultAsync(C => C.Id == characterId);
+            if (character == null)
+            {
                 return NotFound();
+            }
 
-            return new JsonResult(allRank);
+            var ranks = from rank in _context.Ranks
+                        where rank.CharacterId == characterId
+                        orderby rank.Date
+                        select new
+                        {
+                            rank.Date,
+                            rank.Ranking
+                        };
+
+            return new JsonResult(new { character.Name, Ranks = await ranks.ToListAsync() });
         }
         
         private static DateTime GetRankingUpdatedDate(DateTime? date = null)

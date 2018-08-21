@@ -66,7 +66,7 @@
                             <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
                             <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
 
-                            <td style="vertical-align:middle">@Html.Raw($"<a name='rankText' href='#' data-toggle='modal' data-target='#rankModal'>{rankText}</a>")</td>
+                            <td style="vertical-align:middle">@Html.Raw(rankText)</td>
                         </tr>
                     }
                 }
@@ -172,7 +172,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body">
                 <p>Some text in the modal.</p>
@@ -194,21 +194,29 @@
                 $('#categoryTab a[href="' + activeTab + '"]').tab('show');
             }
 
-            $("a[name='rankText']").each(function () {
-                $(this).on("click", function () {
+            $('a[name="rankText"]').each(function () {
+                $(this).on('click', function () {
                     var characterId = $(this).attr('data-id');
-                    console.log('clicked. characterId=' + characterId);
 
-                    console.log('/MemberRank/GetAllRanks?characterId=' + characterId)
-                    //$.ajax({
-                    //    url: "/MemberRank/GetAllRanks?characterId=" + characterId,
-                    //    success: function (result) {
-                    //        console.log(response);
-                    //    }
-                    //});
+                    $.ajax({
+                        type: 'GET',
+                        url: '/MemberRank/GetAllRanks',
+                        data: { 'characterId': characterId },
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data);
+                            //var str = '';
+                            //for (var name in data) {
+                            //    str += '<li>' + data[name] + '</li>';
+                            //}
+                            //$('#timezones').html('<ul>' + str + '</ul>');
 
-                    //$("h4.modal-title").text(characterId);
-                    //$('#rankModal').modal();
+
+                            $('h4.modal-title').text(data.name);
+                            $('div.modal-body').html();
+                            $('#rankModal').modal();
+                        }
+                    });
                 });
             });
         });
