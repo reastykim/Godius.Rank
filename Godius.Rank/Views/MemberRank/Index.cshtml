@@ -46,15 +46,15 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-danger' style='font-size: 12px;text-decoration: underline;'> (<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size: 12px;text-decoration: underline;'> (<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-primary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}'><span class='text-secondary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -105,15 +105,15 @@
                         {
                             if (lastWeeklyRank.Ranking > i)
                             {
-                                weeklyRankText = $"{i} <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span>";
+                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else if (lastWeeklyRank.Ranking < i)
                             {
-                                weeklyRankText = $"{i} <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span>";
+                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                weeklyRankText = $"{i} <span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -126,15 +126,15 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -172,10 +172,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"></h4>
+                <div class="modal-title"></div>
             </div>
             <div class="modal-body">
-                <p>Some text in the modal.</p>
+                <canvas id="rankingHistoryChart" width="400" height="400"></canvas>
             </div>
         </div>
 
@@ -197,28 +197,73 @@
             $('a[name="rankText"]').each(function () {
                 $(this).on('click', function () {
                     var characterId = $(this).attr('data-id');
+                    var url = $(this).attr('data-url');
 
                     $.ajax({
                         type: 'GET',
-                        url: '/MemberRank/GetAllRanks',
+                        url: url,
                         data: { 'characterId': characterId },
                         dataType: 'json',
-                        success: function (data) {
-                            console.log(data);
-                            //var str = '';
-                            //for (var name in data) {
-                            //    str += '<li>' + data[name] + '</li>';
-                            //}
-                            //$('#timezones').html('<ul>' + str + '</ul>');
+                        success: function (result) {
+                            
+                            $('div.modal-title').html(result.position + '&nbsp;&nbsp;<span style="font-size:22px;font-weight: bold;">' + result.name + '</span>');
+
+                            var labels = result.ranks.map(function (e) {
+                                return moment(e.date).format('YYYY-MM-DD');
+                            });
+                            var data = result.ranks.map(function (e) {
+                                return e.ranking;
+                            });
+
+                            var ctx = document.getElementById("rankingHistoryChart");
+                            var rankingHistoryChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        data: data,
+                                        label: '랭킹',
+                                        fill: false,
+                                        borderColor: '#c45850',
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        xAxes: [{
+                                            type: 'time',
+                                            time: {
+                                                unit: 'day',
+                                                displayFormats: {
+                                                    day: 'YYYY-MM-DD'
+                                                }
+                                            }
+                                        }],
+                                        yAxes: [{
+                                            gridLines: {
+                                                color: "black",
+                                                borderDash: [2, 5],
+                                            },
+                                            ticks: {
+                                                min: 1,
+                                                beginAtZero: true,
+                                                reverse: true,
+                                                callback: function (value, index, values) {
+                                                    if (Math.floor(value) === value) {
+                                                        return value;
+                                                    }
+                                                }
+                                            },
+                                        }]
+                                    }
+                                }
+                            });
 
 
-                            $('h4.modal-title').text(data.name);
-                            $('div.modal-body').html();
                             $('#rankModal').modal();
                         }
                     });
                 });
             });
-        });
+        });            
     </script>
 }

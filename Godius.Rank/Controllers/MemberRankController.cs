@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godius.Data;
 using Godius.Data.Models;
+using Godius.RankSite.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,8 @@ namespace Godius.RankSite.Controllers
                 return NotFound();
             }
 
+            var position = GuildPositionsToImageConverter.GetPosisionImage(character.GuildPosition.GetValueOrDefault(GuildPositions.Newbie));
+
             var ranks = from rank in _context.Ranks
                         where rank.CharacterId == characterId
                         orderby rank.Date
@@ -81,9 +84,41 @@ namespace Godius.RankSite.Controllers
                             rank.Ranking
                         };
 
-            return new JsonResult(new { character.Name, Ranks = await ranks.ToListAsync() });
+            return new JsonResult(new
+            {
+                position,
+                character.Name,
+                Ranks = await ranks.ToListAsync()
+            });
         }
-        
+
+        public async Task<IActionResult> GetAllWeeklyRanks(Guid characterId)
+        {
+            var character = await _context.Characters.FirstOrDefaultAsync(C => C.Id == characterId);
+            if (character == null)
+            {
+                return NotFound();
+            }
+
+            var position = GuildPositionsToImageConverter.GetPosisionImage(character.GuildPosition.GetValueOrDefault(GuildPositions.Newbie));
+
+            var ranks = from weeklyRank in _context.WeeklyRanks
+                        where weeklyRank.CharacterId == characterId
+                        orderby weeklyRank.Date
+                        select new
+                        {
+                            weeklyRank.Date,
+                            weeklyRank.Ranking
+                        };
+
+            return new JsonResult(new
+            {
+                position,
+                character.Name,
+                Ranks = await ranks.ToListAsync()
+            });
+        }
+
         private static DateTime GetRankingUpdatedDate(DateTime? date = null)
         {
             if (date == null)
