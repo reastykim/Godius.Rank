@@ -27,8 +27,10 @@ namespace Godius.Data.Models
         [Display(Name = "길드 직급")]
         public GuildPositions? GuildPosition { get; set; }
 
+        [Display(Name = "랭킹")]
         public ICollection<Rank> Ranks { get; set; }
 
+        [Display(Name = "주간 랭킹")]
         public ICollection<WeeklyRank> WeeklyRanks { get; set; }
     }
 }

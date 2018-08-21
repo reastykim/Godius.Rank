@@ -23,7 +23,8 @@ namespace Godius.RankSite.Controllers
         // GET: Characters
         public async Task<IActionResult> Index()
         {
-            var rankContext = _context.Characters.Include(c => c.Guild);
+            var rankContext = _context.Characters.Include(c => c.Guild)
+                .OrderBy(c => c.GuildId).ThenByDescending(c => c.GuildPosition).ThenBy(c => c.Name);
             return View(await rankContext.ToListAsync());
         }
 
@@ -36,7 +37,7 @@ namespace Godius.RankSite.Controllers
             }
 
             var character = await _context.Characters
-                .Include(c => c.Guild)
+                .Include(c => c.Guild).Include(c => c.Ranks).Include(c => c.WeeklyRanks)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (character == null)
             {
