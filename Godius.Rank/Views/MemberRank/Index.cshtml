@@ -46,15 +46,15 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size: 12px;text-decoration: underline;'> (<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size: 12px;text-decoration: underline;'> (<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size: 12px;text-decoration: underline;'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -105,15 +105,15 @@
                         {
                             if (lastWeeklyRank.Ranking > i)
                             {
-                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else if (lastWeeklyRank.Ranking < i)
                             {
-                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                weeklyRankText = $"{i} <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -126,15 +126,15 @@
                         {
                             if (lastRank.Ranking > currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else if (lastRank.Ranking < currentRank.Ranking)
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(currentRank.Ranking - lastRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' href='#' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
+                                rankText = $"{currentRank.Ranking} 위 <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
