@@ -20,7 +20,7 @@ namespace Godius.WebCrawler
 
         static readonly Encoding UsedEncoding = Encoding.GetEncoding(949);
 
-        public static string GetCharacterRanking(string characterName, Encoding encoding)
+        public static string GetCharacterRanking(string characterName)
         {
             var request = WebRequest.Create(API_ADDRESS) as HttpWebRequest;
             request.Method = METHOD;
@@ -39,12 +39,15 @@ namespace Godius.WebCrawler
 
                 var begin = responseText.IndexOf(PARSE_BEGIN_TEXT) + PARSE_BEGIN_TEXT.Length;
                 var end = responseText.IndexOf(PARSE_END_TEXT, begin);
+                if (begin < 0 || end < 0)
+                    return null;
+
                 var rankingText = responseText.Substring(begin, end - begin);
                 return rankingText;
             }
         }
 
-        public static async Task<string> GetCharacterRankingAsync(string characterName, Encoding encoding)
+        public static async Task<string> GetCharacterRankingAsync(string characterName)
         {
             var request = WebRequest.Create(API_ADDRESS) as HttpWebRequest;
             request.Method = METHOD;
