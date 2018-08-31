@@ -2,6 +2,7 @@
 @model Godius.Data.Models.Guild
 @{
     var currentRankingDate = ViewData["Date"] as DateTime?;
+    var weeklyRanks = ViewData["WeeklyRanks"] as List<WeeklyRank>;
     ViewData["Title"] = $"{Model.Name} 길드원 랭킹 ({currentRankingDate?.ToShortDateString()})";
 }
 
@@ -62,12 +63,19 @@
                             rankText = $"{currentRank.Ranking} 위 <span class='text-danger' style='font-size: 12px;text-decoration: underline;'>(New)</span>";
                         }
 
-                        <tr>
+                    <tr>
+                        @if (member.GuildId == Model.Id)
+                        {
                             <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
-                            <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
+                        }
+                        else
+                        {
+                            <td align="center"></td>
+                        }
+                        <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
 
-                            <td style="vertical-align:middle">@Html.Raw(rankText)</td>
-                        </tr>
+                        <td style="vertical-align:middle">@Html.Raw(rankText)</td>
+                    </tr>
                     }
                 }
             </tbody>
@@ -85,11 +93,11 @@
             </thead>
             <tbody>
                 @{
-                    var sortedRankList = Model.WeeklyRanks.Where(WR => WR.Date == currentRankingDate)
-                                                          .OrderBy(WR => WR.Ranking)
-                                                          .ToList();
+                    var sortedRankList = weeklyRanks.Where(WR => WR.Date == currentRankingDate)
+                                                    .OrderBy(WR => WR.Ranking)
+                                                    .ToList();
 
-                    var lastWeeklyRankList = Model.WeeklyRanks.Where(WR => WR.Date == currentRankingDate?.AddDays(-7));
+                    var lastWeeklyRankList = weeklyRanks.Where(WR => WR.Date == currentRankingDate?.AddDays(-7));
 
                     for (int i = 1; i <= sortedRankList.Count; i++)
                     {
@@ -153,7 +161,14 @@
                                     @Html.Raw(weeklyRankText)
                                 }
                             </td>
-                            <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
+                            @if (member.GuildId == Model.Id)
+                            {
+                                <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
+                            }
+                            else
+                            {
+                                <td align="center"></td>
+                            }
                             <td style="vertical-align:middle"><b>@Html.DisplayFor(model => member.Name)</b></td>
 
                             <td style="vertical-align:middle">@Html.Raw(rankText)</td>

@@ -50,18 +50,25 @@ namespace Godius.RankSite.Controllers
 
             ViewData["Date"] = rankingDate;
 
-            var targetGuild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
-                                                   .Include(G => G.WeeklyRanks)
-                                            .Where(G => G.Name == guildName)
-                                            .FirstOrDefaultAsync(G => G.Name == guildName);
+            var guild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
+                                             .FirstOrDefaultAsync(G => G.Name == guildName);
 
-            if (targetGuild == null)
+            if (guild == null)
             {
                 return NotFound();
             }
             else
             {
-                return View(targetGuild);
+                var weeklyRanks = await _context.WeeklyRanks.Include(WR => WR.Character).ThenInclude(C => C.Ranks)
+                                                            .Include(WR => WR.Guild)
+                                                            .Where(WR => WR.Guild.Name == guildName)
+                                                            .ToListAsync();
+
+                ViewData["WeeklyRanks"] = weeklyRanks;
+
+
+
+                return View(guild);
             }
         }
 
