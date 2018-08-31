@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Godius.Data.Helper;
 
-namespace Godius.RankCollector
+namespace Godius.GuildMemberRankCollector
 {
     class Program
     {

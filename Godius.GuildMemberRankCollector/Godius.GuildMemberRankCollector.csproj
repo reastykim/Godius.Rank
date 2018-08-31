@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5629945A-F5F1-44B1-A6EE-AF31977C829D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Godius.RankCollector</RootNamespace>
-    <AssemblyName>Godius.RankCollector</AssemblyName>
+    <RootNamespace>Godius.GuildMemberRankCollector</RootNamespace>
+    <AssemblyName>Godius.GuildMemberRankCollector</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Godius.RankSite", "Godius.Rank\Godius.RankSite.csproj", "{A03BCAC3-2E28-4034-A80E-F74FE02A810B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.RankCollector", "Godius.RankCollector\Godius.RankCollector.csproj", "{5629945A-F5F1-44B1-A6EE-AF31977C829D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.GuildMemberRankCollector", "Godius.GuildMemberRankCollector\Godius.GuildMemberRankCollector.csproj", "{5629945A-F5F1-44B1-A6EE-AF31977C829D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.Data", "Godius.Data\Godius.Data.csproj", "{37FDE3FD-E1BA-484E-8872-7973EF6E4307}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Godius.Data", "Godius.Data\Godius.Data.csproj", "{37FDE3FD-E1BA-484E-8872-7973EF6E4307}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
