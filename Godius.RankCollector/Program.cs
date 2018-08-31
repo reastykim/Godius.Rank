@@ -1,4 +1,8 @@
 ﻿using Godius.Data;
+using Godius.Data.Helper;
+using Godius.Data.Models;
+using Godius.WebCrawler;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -20,75 +24,81 @@ namespace Godius.RankCollector
                 return;
             }
 
-            // Validate a Guild Member file
+            // Validate a Character List file
             var characterListFilePath = args[0];
             var characterListFileInfo = new FileInfo(characterListFilePath);
             if (!characterListFileInfo.Exists || !characterListFileInfo.Extension.Equals(".csv", StringComparison.CurrentCultureIgnoreCase))
             {
-                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Invalid a Character list file");
+                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Invalid a Character List file");
                 Console.Read();
                 return;
             }
 
-            //// Initialize a DB
-            //var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            //var options = SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder<RankContext>(), connectionString).Options;
-            //using (var context = new RankContext(options))
-            //{
-            //    DbInitializer.Initialize(context);
-            //    var guildName = characterListFileInfo.Name.Replace(characterListFileInfo.Extension, "");
-            //    var guild = CreateGuild(context, guildName);
+            var rankingDate = GetRankingUpdatedDate();
 
-            //    // Read a Guild Member file
-            //    using (var sr = characterListFileInfo.OpenText())
-            //    {
-            //        var membersInfo = sr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            //        foreach (var memberInfo in membersInfo)
-            //        {
-            //            var splitedMemberInfo = memberInfo.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            //            if (splitedMemberInfo.Length != 2)
-            //            {
-            //                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Invalid a Member Info");
-            //                continue;
-            //            }
+            // Initialize a DB
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            var options = SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder<RankContext>(), connectionString).Options;
+            using (var context = new RankContext(options))
+            {
+                DbInitializer.Initialize(context);
 
-            //            // Gets or Create the Guild and Member to Database
-            //            var guildPosition = splitedMemberInfo[0];
-            //            var characterName = splitedMemberInfo[1];
-            //            var member = CreateCharacter(context, characterName, guild, guildPosition);
+                // Read a Character List file
+                using (var sr = characterListFileInfo.OpenText())
+                {
+                    var characterInfos = sr.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var characterInfo in characterInfos)
+                    {
+                        var splitedCharacterInfos = characterInfo.Split(',');
+                        if (splitedCharacterInfos.Length < 3)
+                        {
+                            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Invalid a Character Info. Input = [{splitedCharacterInfos}]");
+                            continue;
+                        }
 
-            //            // Get a Ranking of Character vis web parsing
-            //            var ranking = GetCharacterRanking(member.Name, UsedEncoding);
-            //            if (String.IsNullOrWhiteSpace(ranking))
-            //            {
-            //                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Cannot found a ranking of Member '{member.Name}'");
-            //                continue;
-            //            }
+                        var guildName = splitedCharacterInfos[0];
+                        var guildPosition = splitedCharacterInfos[1];
+                        var characterName = splitedCharacterInfos[2];
 
-            //            var rankingDate = GetRankingUpdatedDate();
+                        // Gets or Create a Guild to Database
+                        Guild guild = null;
+                        if (String.IsNullOrWhiteSpace(guildName) != true)
+                        {
+                            guild = GetOrCreateGuild(context, guildName);
+                        }
 
-            //            // Update
-            //            UpdateRanking(context, member, ranking, rankingDate);
-            //        }
-            //    }
+                        // Gets or Create a Character to Database
+                        var character = GetOrCreateCharacter(context, characterName, guild?.Id, guildPosition);
 
-            //    // Add Weekly Ranking
-            //    AddWeeklyRanking(context, guild);
-            //}
+                        // Get a Ranking of Character vis web parsing
+                        var ranking = RankingCrawler.GetCharacterRanking(character.Name);
+                        if (String.IsNullOrWhiteSpace(ranking))
+                        {
+                            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Cannot found a ranking of Member '{character.Name}'");
+                            continue;
+                        }
 
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Finish a getting the ranking of memeber!");
+                        
+
+                        // Update Character Ranking
+                        UpdateCharacterRanking(context, character, ranking, rankingDate);
+                    }
+
+                    // Update Guild Weekly Ranking
+                    UpdateGuildWeeklyRanking(context, rankingDate);
+                }
+            }
+
+            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Finish a getting the ranking of character list!");
             Console.ReadLine();
         }
 
-        /*
-        private static void UpdateWeeklyRanking(RankContext context, Guild guild, DateTime rankingDate)
+        private static Guild GetOrCreateGuild(RankContext context, string guildName)
         {
-            AddWeeklyRanking(context, guild, rankingDate);
-        }
+            if (String.IsNullOrWhiteSpace(guildName))
+                throw new ArgumentException("The guild name is invalid.", nameof(guildName));
 
-        private static Guild CreateGuild(RankContext context, string guildName)
-        {
-            var guild = context.Guilds.Include("Characters").FirstOrDefault(G => G.Name == guildName);
+            var guild = context.Guilds.FirstOrDefault(G => G.Name == guildName);
             if (guild == null)
             {
                 guild = new Guild { Name = guildName };
@@ -99,26 +109,30 @@ namespace Godius.RankCollector
             return guild;
         }
 
-        private static Character CreateCharacter(RankContext context, string characterName, Guild guild, string guildPositionDisplay)
+        private static Character GetOrCreateCharacter(RankContext context, string characterName, Guid? guildId, string guildPositionDisplay)
         {
-            var character = context.Characters.Include("Guild").Include("Ranks").FirstOrDefault(C => C.Name == characterName);
-            var guildPosition = EnumHelper.ParseDisplayToEnum<GuildPositions>(guildPositionDisplay);
+            var character = context.Characters.FirstOrDefault(C => C.Name == characterName);
+            GuildPositions? guildPosition = null;
+            if (String.IsNullOrWhiteSpace(guildPositionDisplay) != true)
+            {
+                guildPosition = EnumHelper.ParseDisplayToEnum<GuildPositions>(guildPositionDisplay);
+            }
 
             if (character == null)
             {
-
-                character = new Character { Name = characterName, GuildId = guild.Id, GuildPosition = guildPosition };
+                character = new Character { Name = characterName, GuildId = guildId, GuildPosition = guildPosition };
                 context.Characters.Add(character);
             }
-
-            if (character.GuildId != guild.Id)
+            else
             {
-                character.GuildId = guild.Id;
-            }
-
-            if (character.GuildPosition != guildPosition)
-            {
-                character.GuildPosition = guildPosition;
+                if (character.GuildId != guildId)
+                {
+                    character.GuildId = guildId;
+                }
+                if (character.GuildPosition != guildPosition)
+                {
+                    character.GuildPosition = guildPosition;
+                }
             }
 
             context.SaveChanges();
@@ -126,85 +140,47 @@ namespace Godius.RankCollector
             return character;
         }
 
-        private static Rank UpdateRanking(RankContext context, Character member, string ranking, DateTime rankingDate)
+        private static Rank UpdateCharacterRanking(RankContext context, Character character, string ranking, DateTime rankingDate)
         {
-            var rank = member.Ranks?.FirstOrDefault(R => R.Date.Value == rankingDate);
+            var rank = context.Ranks?.FirstOrDefault(R => R.Date.Value == rankingDate && R.CharacterId == character.Id);
             if (rank == null)
             {
-                rank = new Rank { CharacterId = member.Id, Ranking = Int32.Parse(ranking), Date = rankingDate };
+                rank = new Rank { CharacterId = character.Id, Ranking = Int32.Parse(ranking), Date = rankingDate };
                 context.Ranks.Add(rank);
                 context.SaveChanges();
 
-                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Updated the Ranking. Name={member.Name}, Rank={ranking}");
+                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Updated the Ranking. Name={character.Name}, Rank={ranking}");
             }
 
             return rank;
         }
 
-        private static string GetCharacterRanking(string characterName, Encoding encoding)
-        {
-            try
-            {
-                var request = WebRequest.Create(API_ADDRESS) as HttpWebRequest;
-                request.Method = METHOD;
-                request.ContentType = CONTENT_TYPE;
-
-                var requestStream = request.GetRequestStream();
-                using (var sw = new StreamWriter(requestStream))
-                {
-                    sw.WriteLine($"{PARAMETER_KEY}={HttpUtility.UrlEncode(characterName, UsedEncoding)}");
-                }
-                //request.ContentLength = requestStream.Length;
-
-                var response = request.GetResponse() as HttpWebResponse;
-                using (var sr = new StreamReader(response.GetResponseStream(), UsedEncoding))
-                {
-                    var responseText = sr.ReadToEnd();
-
-                    var begin = responseText.IndexOf(PARSE_BEGIN_TEXT) + PARSE_BEGIN_TEXT.Length;
-                    var end = responseText.IndexOf(PARSE_END_TEXT, begin);
-                    var rankingText = responseText.Substring(begin, end - begin);
-                    return rankingText;
-                }
-            }
-            catch (WebException we)
-            {
-
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            return String.Empty;
-        }
-
-        private static void AddWeeklyRanking(RankContext context, Guild guild, DateTime? rankingDate = null)
+        private static int UpdateGuildWeeklyRanking(RankContext context, DateTime? rankingDate = null)
         {
             rankingDate = GetRankingUpdatedDate(rankingDate);
 
-            List<Rank> currentWeekRanks = new List<Rank>();
-            foreach (var characterId in guild.Characters.Where(C => C.IsActivated).Select(C => C.Id))
+            foreach (var guild in context.Characters.Include(C => C.Guild)
+                                                    .Include(C => C.Ranks)
+                                         .Where(C => C.IsActivated && C.GuildId != null)
+                                         .GroupBy(C => C.GuildId))
             {
-                var character = context.Characters.Include("Guild").Include("Ranks")
-                                                  .FirstOrDefault(C => C.Id == characterId);
+                var currentWeekRanks = guild.Select(C => new { C.Id, C.Name, Rank = C.Ranks?.FirstOrDefault(R => R.Date.GetValueOrDefault() == rankingDate) })
+                                            .Where(CWR => CWR.Rank != null)
+                                            .OrderBy(CWR => CWR.Rank.Ranking)
+                                            .ToList();
 
-                var currentWeekRank = character.Ranks.FirstOrDefault(R => R.Date.GetValueOrDefault() == rankingDate);
-                if (currentWeekRank != null)
+                for (int i = 1; i <= currentWeekRanks.Count; i++)
                 {
-                    currentWeekRanks.Add(currentWeekRank);
+                    var rank = currentWeekRanks[i - 1];
+                    if (context.WeeklyRanks.Any(WR => WR.CharacterId == rank.Id && WR.Date == rankingDate))
+                        continue;
+                    
+                    var weeklyRank = new WeeklyRank { CharacterId = rank.Id, GuildId = guild.Key, Ranking = i, Date = rankingDate };
+                    context.WeeklyRanks.Add(weeklyRank);
                 }
             }
 
-            currentWeekRanks = currentWeekRanks.OrderBy(R => R.Ranking).ToList();
-
-            for (int i = 1; i <= currentWeekRanks.Count; i++)
-            {
-                var rank = currentWeekRanks[i - 1];
-                var weeklyRank = new WeeklyRank { CharacterId = rank.CharacterId, GuildId = guild.Id, Ranking = i, Date = rankingDate };
-                context.WeeklyRanks.Add(weeklyRank);
-                context.SaveChanges();
-            }
+            return context.SaveChanges();
         }
 
         private static DateTime GetRankingUpdatedDate(DateTime? date = null)
@@ -220,6 +196,6 @@ namespace Godius.RankCollector
             }
 
             return date.Value;
-        }*/
+        }
     }
 }
