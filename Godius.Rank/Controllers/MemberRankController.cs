@@ -33,11 +33,15 @@ namespace Godius.RankSite.Controllers
             switch (subDomain?.ToUpper())
             {
                 case "GISADAN":
-                default:
+                //default:
                     guildName = "기사단";
                     break;
                 case "AVENGERS":
                     guildName = "어벤져스";
+                    break;
+                case "MARVEL":
+                default:
+                    guildName = "MARVEL";
                     break;
             }
 
