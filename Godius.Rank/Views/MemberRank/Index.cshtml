@@ -212,12 +212,13 @@
             $('a[name="rankText"]').each(function () {
                 $(this).on('click', function () {
                     var characterId = $(this).attr('data-id');
+                    var date = '@currentRankingDate?.ToShortDateString()';
                     var url = $(this).attr('data-url');
 
                     $.ajax({
                         type: 'GET',
                         url: url,
-                        data: { 'characterId': characterId },
+                        data: { 'characterId': characterId, 'date': date },
                         dataType: 'json',
                         success: function (result) {
                             

@@ -76,7 +76,7 @@ namespace Godius.RankSite.Controllers
             }
         }
 
-        public async Task<IActionResult> GetAllRanks(Guid characterId)
+        public async Task<IActionResult> GetAllRanks(Guid characterId, DateTime date)
         {
             var character = await _context.Characters.FirstOrDefaultAsync(C => C.Id == characterId);
             if (character == null)
@@ -87,7 +87,7 @@ namespace Godius.RankSite.Controllers
             var position = GuildPositionsToImageConverter.GetPosisionImage(character.GuildPosition.GetValueOrDefault(GuildPositions.Newbie));
 
             var ranks = from rank in _context.Ranks
-                        where rank.CharacterId == characterId
+                        where rank.CharacterId == characterId && rank.Date <= date
                         orderby rank.Date
                         select new
                         {
@@ -103,7 +103,7 @@ namespace Godius.RankSite.Controllers
             });
         }
 
-        public async Task<IActionResult> GetAllWeeklyRanks(Guid characterId)
+        public async Task<IActionResult> GetAllWeeklyRanks(Guid characterId, DateTime date)
         {
             var character = await _context.Characters.FirstOrDefaultAsync(C => C.Id == characterId);
             if (character == null)
@@ -114,7 +114,7 @@ namespace Godius.RankSite.Controllers
             var position = GuildPositionsToImageConverter.GetPosisionImage(character.GuildPosition.GetValueOrDefault(GuildPositions.Newbie));
 
             var ranks = from weeklyRank in _context.WeeklyRanks
-                        where weeklyRank.CharacterId == characterId
+                        where weeklyRank.CharacterId == characterId && weeklyRank.Date <= date
                         orderby weeklyRank.Date
                         select new
                         {
