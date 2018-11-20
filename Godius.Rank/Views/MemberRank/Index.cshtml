@@ -3,7 +3,7 @@
 @{
     var currentRankingDate = ViewData["Date"] as DateTime?;
     var weeklyRanks = ViewData["WeeklyRanks"] as List<WeeklyRank>;
-    ViewData["Title"] = $"{Model.Name} 길드원 랭킹 ({currentRankingDate?.ToShortDateString()})";
+    ViewData["Title"] = $"{Model.Name} 길드원 랭킹 ({currentRankingDate?.ToString("yyyy-MM-dd")})";
 }
 
 <br />
