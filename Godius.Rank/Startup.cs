@@ -33,6 +33,8 @@ namespace Godius.RankSite
                 options.ForwardClientCertificate = false;
             });
 
+            services.AddMemoryCache();
+
             services.AddMvc();
         }
 

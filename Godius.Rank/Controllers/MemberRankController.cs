@@ -8,6 +8,7 @@ using Godius.RankSite.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
 namespace Godius.RankSite.Controllers
@@ -15,15 +16,12 @@ namespace Godius.RankSite.Controllers
     public class MemberRankController : Controller
     {
         private readonly RankContext _context;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IConfiguration _configuration;
+        private readonly IMemoryCache _memoryCache;
 
-        public MemberRankController(RankContext context,
-            IHostingEnvironment hostingEnvironment, IConfiguration configuration)
+        public MemberRankController(RankContext context, IMemoryCache memoryCache)
         {
             _context = context;
-            _hostingEnvironment = hostingEnvironment;
-            _configuration = configuration;
+            _memoryCache = memoryCache;
         }
 
         public async Task<IActionResult> Index(DateTime? rankingDate = null)
@@ -50,30 +48,43 @@ namespace Godius.RankSite.Controllers
                 return NotFound();
             }
 
-            rankingDate = GetRankingUpdatedDate(rankingDate);
-
-            ViewData["Date"] = rankingDate;
-
             var guild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
                                              .FirstOrDefaultAsync(G => G.Name == guildName);
-
             if (guild == null)
             {
                 return NotFound();
             }
-            else
+
+            rankingDate = GetRankingUpdatedDate(rankingDate);
+
+            ViewData["Date"] = rankingDate;
+
+            var cacheKey = $"{guildName}_{rankingDate.Value.ToString("yyyy-MM-dd")}";
+            List<WeeklyRank> weeklyRanks;
+
+            // Look for cache key.
+            if (!_memoryCache.TryGetValue(cacheKey, out weeklyRanks))
             {
-                var weeklyRanks = await _context.WeeklyRanks.Include(WR => WR.Character).ThenInclude(C => C.Ranks)
-                                                            .Include(WR => WR.Guild)
-                                                            .Where(WR => WR.Guild.Name == guildName)
-                                                            .ToListAsync();
+                // Key not in cache, so get data.
+                weeklyRanks = await _context.WeeklyRanks.Include(WR => WR.Character).ThenInclude(C => C.Ranks)
+                                                        .Include(WR => WR.Guild)
+                                                        .Where(WR => WR.Guild.Name == guildName)
+                                                        .ToListAsync();
 
-                ViewData["WeeklyRanks"] = weeklyRanks;
+                
 
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    // Keep in cache for this time, reset time if accessed.
+                    .SetSlidingExpiration(TimeSpan.FromHours(12));
 
-
-                return View(guild);
+                // Save data in cache.
+                _memoryCache.Set(cacheKey, weeklyRanks, cacheEntryOptions);
             }
+
+            ViewData["WeeklyRanks"] = weeklyRanks;
+
+            return View(guild);
         }
 
         public async Task<IActionResult> GetAllRanks(Guid characterId, DateTime date)
