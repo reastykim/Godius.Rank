@@ -35,9 +35,10 @@ namespace Godius.RankCollector
             }
 
             var rankingDate = GetRankingUpdatedDate();
+			IRankingCrawler rankingCrawler = new RankingCrawlerV2();
 
-            // Initialize a DB
-            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+			// Initialize a DB
+			var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var options = SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder<RankContext>(), connectionString).Options;
             using (var context = new RankContext(options))
             {
@@ -71,7 +72,7 @@ namespace Godius.RankCollector
                         var character = GetOrCreateCharacter(context, characterName, guild?.Id, guildPosition);
 
                         // Get a Ranking of Character vis web parsing
-                        var ranking = RankingCrawler.GetCharacterRanking(character.Name);
+                        var ranking = rankingCrawler.GetCharacterRanking(character.Name);
                         if (String.IsNullOrWhiteSpace(ranking))
                         {
                             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}] Cannot found a ranking of Member '{character.Name}'");

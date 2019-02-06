@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IRankingCrawler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RankingCrawler.cs" />
+    <Compile Include="RankingCrawler2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

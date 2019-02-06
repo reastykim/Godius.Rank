@@ -9,8 +9,8 @@ using System.Web;
 
 namespace Godius.WebCrawler
 {
-    public class RankingCrawler
-    {
+    public class RankingCrawler : IRankingCrawler
+	{
         const string API_ADDRESS = "http://godius10.cafe24.com/comuser/commu/com_ranking.asp";
         const string METHOD = "POST";
         const string CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -18,9 +18,9 @@ namespace Godius.WebCrawler
         const string PARSE_BEGIN_TEXT = "<span style='color:#ff0000'>";
         const string PARSE_END_TEXT = "</span>";
 
-        static readonly Encoding UsedEncoding = Encoding.GetEncoding(949);
+        readonly Encoding UsedEncoding = Encoding.GetEncoding(949);
 
-        public static string GetCharacterRanking(string characterName)
+        public string GetCharacterRanking(string characterName)
         {
             var request = WebRequest.Create(API_ADDRESS) as HttpWebRequest;
             request.Method = METHOD;
@@ -47,7 +47,7 @@ namespace Godius.WebCrawler
             }
         }
 
-        public static async Task<string> GetCharacterRankingAsync(string characterName)
+        public async Task<string> GetCharacterRankingAsync(string characterName)
         {
             var request = WebRequest.Create(API_ADDRESS) as HttpWebRequest;
             request.Method = METHOD;
