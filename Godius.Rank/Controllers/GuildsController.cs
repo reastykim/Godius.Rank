@@ -54,7 +54,7 @@ namespace Godius.RankSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Image")] Guild guild)
+        public async Task<IActionResult> Create([Bind("Id,Name,Alias,Image")] Guild guild)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace Godius.RankSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Image")] Guild guild)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Alias,Image")] Guild guild)
         {
             if (id != guild.Id)
             {
@@ -142,7 +142,7 @@ namespace Godius.RankSite.Controllers
         {
             var guild = await _context.Guilds.SingleOrDefaultAsync(m => m.Id == id);
             _context.Guilds.Remove(guild);
-            await _context.SaveChangesAsync();
+			await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -26,31 +26,16 @@ namespace Godius.RankSite.Controllers
 
         public async Task<IActionResult> Index(DateTime? rankingDate = null)
         {
-            var subDomain = HttpContext.Request.Host.Host.Split('.', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-            var guildName = String.Empty;
-            switch (subDomain?.ToUpper())
-            {
-                case "GISADAN":
-                default:
-                    guildName = "기사단";
-                    break;
-                case "AVENGERS":
-                    guildName = "어벤져스";
-                    break;
-                case "MARVEL":
-                //default:
-                    guildName = "MARVEL";
-                    break;
-            }
+#if DEBUG
+			var subDomain = "blackwind";
+#else
+			var subDomain = HttpContext.Request.Host.Host.Split('.', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+#endif
+			var guild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
+											 .Include(G => G.WeeklyRanks)
+											 .FirstOrDefaultAsync(G => G.Alias == subDomain);
 
-            if (String.IsNullOrWhiteSpace(guildName))
-            {
-                return NotFound();
-            }
-
-            var guild = await _context.Guilds.Include(G => G.Characters).ThenInclude(C => C.Ranks)
-                                             .FirstOrDefaultAsync(G => G.Name == guildName);
-            if (guild == null)
+			if (guild == null)
             {
                 return NotFound();
             }
@@ -59,19 +44,14 @@ namespace Godius.RankSite.Controllers
 
             ViewData["Date"] = rankingDate;
 
-            var cacheKey = $"{guildName}_{rankingDate.Value.ToString("yyyy-MM-dd")}";
+            var cacheKey = $"{guild.Name}_{rankingDate.Value.ToString("yyyy-MM-dd")}";
             List<WeeklyRank> weeklyRanks;
 
             // Look for cache key.
             if (!_memoryCache.TryGetValue(cacheKey, out weeklyRanks))
             {
-                // Key not in cache, so get data.
-                weeklyRanks = await _context.WeeklyRanks.Include(WR => WR.Character).ThenInclude(C => C.Ranks)
-                                                        .Include(WR => WR.Guild)
-                                                        .Where(WR => WR.Guild.Name == guildName)
-                                                        .ToListAsync();
-
-                
+				// Key not in cache, so get data.
+				weeklyRanks = guild.WeeklyRanks.ToList();
 
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()

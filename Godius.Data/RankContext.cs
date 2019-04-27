@@ -24,6 +24,6 @@ namespace Godius.Data
             modelBuilder.Entity<Character>().ToTable("Character").Property(C => C.IsActivated).HasDefaultValue(true);
             modelBuilder.Entity<Rank>().ToTable("Rank");
             modelBuilder.Entity<WeeklyRank>().ToTable("WeeklyRank");
-        }
-    }
+		}
+	}
 }

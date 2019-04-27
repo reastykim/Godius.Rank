@@ -15,6 +15,9 @@ namespace Godius.Data.Models
         [Display(Name = "길드명")]
         public string Name { get; set; }
 
+		[Display(Name = "별칭")]
+		public string Alias { get; set; }
+
         [Display(Name = "길드마크")]
         public string Image { get; set; }
 
