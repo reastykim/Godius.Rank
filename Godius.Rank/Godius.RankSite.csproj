@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Godius.Data\Godius.Data.csproj" />
+    <ProjectReference Include="..\Godius.WebCrawler\Godius.WebCrawler.csproj" />
   </ItemGroup>
 
 </Project>

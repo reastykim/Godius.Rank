@@ -137,7 +137,7 @@
       <Name>Godius.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\Godius.WebCrawler\Godius.WebCrawler.csproj">
-      <Project>{b877a068-616a-4ad4-9b07-1984bfc4b8df}</Project>
+      <Project>{b19bf68a-9d55-47f6-9576-fb207df28723}</Project>
       <Name>Godius.WebCrawler</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,13 +5,15 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Godius.RankSite", "Godius.Rank\Godius.RankSite.csproj", "{A03BCAC3-2E28-4034-A80E-F74FE02A810B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.GuildMemberRankCollector", "Godius.GuildMemberRankCollector\Godius.GuildMemberRankCollector.csproj", "{5629945A-F5F1-44B1-A6EE-AF31977C829D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Godius.Data", "Godius.Data\Godius.Data.csproj", "{37FDE3FD-E1BA-484E-8872-7973EF6E4307}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.RankCollector", "Godius.RankCollector\Godius.RankCollector.csproj", "{6EFA7F7B-B712-4AE7-A3DC-BAC6BA3C0E46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.WebCrawler", "Godius.WebCrawler\Godius.WebCrawler.csproj", "{B877A068-616A-4AD4-9B07-1984BFC4B8DF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".NET Core", ".NET Core", "{D875A7A5-6379-4566-B0A8-DEFEFF91660E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Standard", "Standard", "{95280802-3BBE-4A08-A58B-162EBD91738C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godius.WebCrawler", "Godius.WebCrawler\Godius.WebCrawler.csproj", "{B19BF68A-9D55-47F6-9576-FB207DF28723}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,6 @@ Global
 		{A03BCAC3-2E28-4034-A80E-F74FE02A810B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03BCAC3-2E28-4034-A80E-F74FE02A810B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03BCAC3-2E28-4034-A80E-F74FE02A810B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5629945A-F5F1-44B1-A6EE-AF31977C829D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5629945A-F5F1-44B1-A6EE-AF31977C829D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5629945A-F5F1-44B1-A6EE-AF31977C829D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5629945A-F5F1-44B1-A6EE-AF31977C829D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37FDE3FD-E1BA-484E-8872-7973EF6E4307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37FDE3FD-E1BA-484E-8872-7973EF6E4307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37FDE3FD-E1BA-484E-8872-7973EF6E4307}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,13 +33,17 @@ Global
 		{6EFA7F7B-B712-4AE7-A3DC-BAC6BA3C0E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EFA7F7B-B712-4AE7-A3DC-BAC6BA3C0E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EFA7F7B-B712-4AE7-A3DC-BAC6BA3C0E46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B877A068-616A-4AD4-9B07-1984BFC4B8DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B877A068-616A-4AD4-9B07-1984BFC4B8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B877A068-616A-4AD4-9B07-1984BFC4B8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B877A068-616A-4AD4-9B07-1984BFC4B8DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B19BF68A-9D55-47F6-9576-FB207DF28723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B19BF68A-9D55-47F6-9576-FB207DF28723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B19BF68A-9D55-47F6-9576-FB207DF28723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B19BF68A-9D55-47F6-9576-FB207DF28723}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A03BCAC3-2E28-4034-A80E-F74FE02A810B} = {D875A7A5-6379-4566-B0A8-DEFEFF91660E}
+		{B19BF68A-9D55-47F6-9576-FB207DF28723} = {95280802-3BBE-4A08-A58B-162EBD91738C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A70389AC-F9E1-426E-883A-54DD4DAE0ECA}
