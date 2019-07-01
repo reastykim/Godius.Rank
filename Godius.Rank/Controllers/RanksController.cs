@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Godius.Data;
 using Godius.Data.Models;
+using Godius.WebCrawler;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Godius.RankSite.Controllers
 {
     public class RanksController : Controller
     {
         private readonly RankContext _context;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IRankingCrawler _rankingCrawler;
 
-        public RanksController(RankContext context)
+        public RanksController(RankContext context, IMemoryCache memoryCache)
         {
             _context = context;
+            _memoryCache = memoryCache;
+            _rankingCrawler = new RankingCrawlerV2();
         }
 
         // GET: Ranks
@@ -24,7 +30,7 @@ namespace Godius.RankSite.Controllers
         {
             var rankContext = _context.Ranks.Include(r => r.Character).ThenInclude(C => C.Guild)
                                             .OrderBy(R => R.Character.Guild.Name)
-                                            .ThenBy(R => R.Character.Name).ThenBy(R => R.Date);
+                                            .ThenBy(R => R.Character.Name).ThenByDescending(R => R.Date);
             return View(await rankContext.ToListAsync());
         }
 
@@ -157,9 +163,84 @@ namespace Godius.RankSite.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> UpdateAll()
+        {
+            var rankingDate = GetRankingUpdatedDate();
+            var characters = _context.Characters.Include(C => C.Guild).Include(C => C.Ranks);
+            foreach (var character in characters)
+            {
+                var rankText = await _rankingCrawler.GetCharacterRankingAsync(character.Name);
+                if (String.IsNullOrWhiteSpace(rankText))
+                {
+                    continue;
+                }
+
+                // Update Character Ranking
+                var rank = character.Ranks.FirstOrDefault(R => R.Date.Value == rankingDate);
+                if (rank == null)
+                {
+                    rank = new Rank { CharacterId = character.Id, Ranking = Int32.Parse(rankText), Date = rankingDate };
+                    _context.Ranks.Add(rank);
+                }
+                //else // Warning!!
+                //{
+                //    rank.Ranking = Int32.Parse(rankText);
+                //}
+            }
+
+            // Update Guild Weekly Ranking
+            foreach (var guild in characters.Where(C => C.IsActivated && C.GuildId != null).GroupBy(C => C.GuildId))
+            {
+                var currentWeekRanks = guild.Select(C => new { C.Id, C.Name, Rank = C.Ranks?.FirstOrDefault(R => R.Date.GetValueOrDefault() == rankingDate) })
+                                            .Where(CWR => CWR.Rank != null)
+                                            .OrderBy(CWR => CWR.Rank.Ranking)
+                                            .ToList();
+
+                for (int i = 1; i <= currentWeekRanks.Count; i++)
+                {
+                    var character = currentWeekRanks[i - 1];
+                    var weeklyRank = _context.WeeklyRanks.FirstOrDefault(WR => WR.CharacterId == character.Id && WR.Date == rankingDate);
+                    if (weeklyRank == null)
+                    {
+                        weeklyRank = new WeeklyRank { CharacterId = character.Id, GuildId = guild.Key, Ranking = i, Date = rankingDate };
+                        _context.WeeklyRanks.Add(weeklyRank);
+                    }
+                    //else // Warning!!
+                    //{
+                    //    weeklyRank.Ranking = i;
+                    //}
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Clear cache for each Guild
+            foreach (var guildName in _context.Guilds.Select(G => G.Name))
+            {
+                _memoryCache.Remove($"{guildName}_{rankingDate.ToString("yyyy-MM-dd")}");
+            }            
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool RankExists(Guid id)
         {
             return _context.Ranks.Any(e => e.Id == id);
+        }
+
+        private static DateTime GetRankingUpdatedDate(DateTime? date = null)
+        {
+            if (date == null)
+            {
+                date = DateTime.Now.Date;
+            }
+
+            while (date.Value.DayOfWeek != DayOfWeek.Friday)
+            {
+                date = date.Value.AddDays(-1);
+            }
+
+            return date.Value;
         }
     }
 }
