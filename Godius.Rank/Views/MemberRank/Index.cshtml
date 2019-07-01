@@ -103,7 +103,12 @@
                     {
                         var sortedRank = sortedRankList[i - 1];
                         var member = sortedRank.Character;
-                        var lastWeeklyRank = lastWeeklyRankList.FirstOrDefault(WR => WR.CharacterId == member.Id);
+                        if (member == null)
+                        {
+                            continue;
+                        }
+
+                        var lastWeeklyRank = lastWeeklyRankList?.FirstOrDefault(WR => WR.CharacterId == member.Id);
 
                         var currentRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate);
                         var lastRank = member.Ranks.FirstOrDefault(R => R.Date == currentRankingDate?.AddDays(-7));
@@ -161,7 +166,7 @@
                                     @Html.Raw(weeklyRankText)
                                 }
                             </td>
-                            @if (member.GuildId == Model.Id)
+                            @if (member?.GuildId == Model.Id)
                             {
                                 <td align="center">@Html.Raw(GuildPositionsToImageConverter.GetPosisionImage(member.GuildPosition.GetValueOrDefault(GuildPositions.Newbie)))</td>
                             }
