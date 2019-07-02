@@ -1,6 +1,7 @@
 ﻿@using Godius.RankSite.Models;
 @{
     var currentRankingDate = ViewData["Date"] as DateTime?;
+    var ogImageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Image}";
 }
 
 <!DOCTYPE html>
@@ -8,6 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:image" content="@ogImageUrl" />
     <title>@ViewData["Title"]</title>
 
     <environment include="Development">
