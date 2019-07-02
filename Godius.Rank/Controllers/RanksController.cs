@@ -9,6 +9,7 @@ using Godius.Data;
 using Godius.Data.Models;
 using Godius.WebCrawler;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Godius.RankSite.Controllers
 {
@@ -163,6 +164,7 @@ namespace Godius.RankSite.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAll()
         {
             var rankingDate = GetRankingUpdatedDate();
@@ -205,10 +207,10 @@ namespace Godius.RankSite.Controllers
                         weeklyRank = new WeeklyRank { CharacterId = character.Id, GuildId = guild.Key, Ranking = i, Date = rankingDate };
                         _context.WeeklyRanks.Add(weeklyRank);
                     }
-                    //else // Warning!!
-                    //{
-                    //    weeklyRank.Ranking = i;
-                    //}
+                    else // Warning!!
+                    {
+                        weeklyRank.Ranking = i;
+                    }
                 }
             }
 

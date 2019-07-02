@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Godius.RankSite.Models;
+@{
     var currentRankingDate = ViewData["Date"] as DateTime?;
 }
 
@@ -33,16 +34,18 @@
                         <span class="glyphicon glyphicon-menu-right"></span>
                     </button>
                 </div>
-                <environment include="Development">
+                @if (User.IsInRole(Roles.Admin))
+                {
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                </environment>
+                }
             </div>
-            <environment include="Development">
+            @if (User.IsInRole(Roles.Admin))
+            {
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-area="" asp-controller="MemberRank" asp-action="Index">MemberRank</a></li>
@@ -51,7 +54,7 @@
                         <li><a asp-area="" asp-controller="Ranks" asp-action="Index">Ranks</a></li>
                     </ul>
                 </div>
-            </environment>
+            }
         </div>
     </nav>
     <div class="container body-content">
