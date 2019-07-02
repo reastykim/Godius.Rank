@@ -116,7 +116,7 @@ namespace Godius.RankSite.Controllers
             });
         }
 
-        public async Task<IActionResult> GetAllWeeklyRanks(Guid characterId, DateTime date)
+        public async Task<IActionResult> GetAllWeeklyRanks(Guid characterId, Guid guildId, DateTime date)
         {
             var character = await _context.Characters.FirstOrDefaultAsync(C => C.Id == characterId);
             if (character == null)
@@ -127,7 +127,9 @@ namespace Godius.RankSite.Controllers
             var position = GuildPositionsToImageConverter.GetPosisionImage(character.GuildPosition.GetValueOrDefault(GuildPositions.Newbie));
 
             var ranks = from weeklyRank in _context.WeeklyRanks
-                        where weeklyRank.CharacterId == characterId && weeklyRank.Date <= date
+                        where weeklyRank.CharacterId == characterId && 
+                              weeklyRank.GuildId == guildId && 
+                              weeklyRank.Date <= date
                         orderby weeklyRank.Date
                         select new
                         {

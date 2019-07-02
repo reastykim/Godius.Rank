@@ -118,15 +118,15 @@
                         {
                             if (lastWeeklyRank.Ranking > i)
                             {
-                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-guild-id='{Model.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-danger' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-up'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else if (lastWeeklyRank.Ranking < i)
                             {
-                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-guild-id='{Model.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-primary' style='font-size:12px'>(<i class='glyphicon glyphicon-arrow-down'></i> {Math.Abs(i - lastWeeklyRank.Ranking)})</span></a>";
                             }
                             else
                             {
-                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
+                                weeklyRankText = $"{i} <a name='rankText' data-id='{member.Id}' data-guild-id='{Model.Id}' data-url='/MemberRank/GetAllWeeklyRanks'><span class='text-secondary' style='font-size:12px'>(<i class='glyphicon glyphicon-minus'></i>)</span></a>";
                             }
                         }
                         else
@@ -217,13 +217,14 @@
             $('a[name="rankText"]').each(function () {
                 $(this).on('click', function () {
                     var characterId = $(this).attr('data-id');
+                    var guildId = $(this).attr('data-guild-id');
                     var date = '@currentRankingDate?.ToShortDateString()';
                     var url = $(this).attr('data-url');
 
                     $.ajax({
                         type: 'GET',
                         url: url,
-                        data: { 'characterId': characterId, 'date': date },
+                        data: { 'characterId': characterId, 'guildId': guildId, 'date': date },
                         dataType: 'json',
                         success: function (result) {
                             
