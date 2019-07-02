@@ -1,7 +1,11 @@
 ﻿@using Godius.RankSite.Models;
 @{
     var currentRankingDate = ViewData["Date"] as DateTime?;
-    var ogImageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Image}";
+    var ogImageUrl = String.Empty;
+    if (Model is Guild)
+    {
+        ogImageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Image}";
+    }
 }
 
 <!DOCTYPE html>
